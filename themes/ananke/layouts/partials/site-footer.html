@@ -1,0 +1,29 @@
+<footer class="bg-near-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="{{ .Site.BaseURL }}" >
+    &copy; {{ now.Format "2006" }} {{ .Site.Title }}
+  </a>
+    <div>{{ partial "social-follow.html" . }}</div>
+  </div>
+</footer>
+
+<!-- MODIFIED FOR RESOURCES ISSUE DEMONSTRATION -->
+
+{{ $params := (index .Params) }}
+
+{{ $.Scratch.Set "js" slice }}
+
+{{ $.Scratch.Add "js" (resources.Get "/src/js/components/jquery.min.js" ) }}
+
+{{ with $params.include.footer.js }}
+  {{ range . }}
+    {{ $.Scratch.Add "js" (resources.Get . ) }}
+  {{ end }}
+{{ end }}
+
+{{ $.Scratch.Add "js" (resources.Get "/src/js/some-code-that-must-go-after-everything.js" ) }}
+
+{{ $js := ( $.Scratch.Get "js" | resources.Concat "assets/js/site.js" ) | minify | fingerprint }}
+
+Scratch: {{ $.Scratch.Get "js" }}<br /><br />
+Variable: {{ $js }}
